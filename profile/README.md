@@ -1,56 +1,58 @@
-## Welcome 👋
+# CrestPace
+
+## 👋 Welcome
 
 **CrestPace** is a crypto-native neobank built for peak performance and fast transaction times. The name reflects the platform's emphasis on providing peak quality services with low-latency.
 
 It is a one-stop fintech application designed to solve all of your financial needs, combining traditional banking features with the speed and flexibility of cryptocurrency.
 
-### Features
+## ✨ Features
 
-#### Virtual Accounts and Cards
+### 💳 Virtual Accounts and Cards
 
 Create virtual accounts and access full card details (card number, CVV, expiry, and billing address). Virtual cards are provisioned quickly and ready for use within the blink of an eye.
 
-#### Transaction Management
+### 💸 Transaction Management
 
 Send payments and receive deposits in the cryptocurrency (or multiple cryptocurrencies) of your choice. All transactions are optimized for speed, giving the platform its name.
 
-#### Peer-to-Peer Transfers
+### 🔄 Peer-to-Peer Transfers
 
 Send funds to other CrestPace users by their unique username. No wallet addresses, no QR codes -- just type a username and hit send.
 
-#### Automatic Conversion and Liquidity
+### 🔁 Automatic Conversion and Liquidity
 
 Balances are automatically converted between cryptocurrencies, stablecoins, and native fiat (such as USD) based on the user's preferences and the transaction context.
 
 **Multi-token payment support:** If the balance in one token is insufficient for a transaction, the system will pull from multiple tokens in the user's wallet based on the user's choice and convert them on the fly to complete the send.
 
-#### Fixed Interest Savings
+### 💰 Fixed Interest Savings
 
 Earn interest on saved cryptocurrency held within the bank. Interest payments are disbursed in either USDT or USDC stable coin.
 
-#### Inbuilt Portfolio Management
+### 📊 Inbuilt Portfolio Management
 
 Manage a crypto portfolio directly inside the app. Includes automatic stop-losses that convert cryptocurrencies to stablecoins during market downturns based on user-defined thresholds, protecting value without manual intervention.
 
-#### Lending Services
+### 🏦 Lending Services
 
 Borrow and lend funds through the platform. CrestPace functions as a full fintech institution by enabling credit markets for its users.
 
-#### Transaction Notifications
+### 🔔 Transaction Notifications
 
 Push and in-app notifications for all account activity: incoming deposits, completed sends, failed conversions, stop-loss triggers, and interest payouts.
 
-#### Compliance and KYC
+### 🛡️ Compliance and KYC
 
-Identity verification and transaction monitoring. Includes a liveness check built from scratch in-house. Risk scoring will also be added. 
+Identity verification and transaction monitoring. Includes a liveness check built from scratch in-house. Risk scoring will also be added.
 
-### Architecture
+## 🧱 Architecture
 
 Before contributing or making assumptions about how anything works, read [architecture_decisions.md](architecture_decisions.md). This document tracks the key technical decisions that shape the entire codebase.
 
 Skipping it leads to assumptions that are likely wrong. For example: CrestPace relies on as few external services as possible. Standard industry features are coded from scratch rather than outsourced to third-party APIs.
 
-### Repositories
+## 📂 Repositories
 
 | Repository | Description |
 |---|---|
@@ -61,7 +63,7 @@ Skipping it leads to assumptions that are likely wrong. For example: CrestPace r
 | [Web-UI](https://github.com/CrestPace/Web-UI) | Website and web-based user interface |
 | [Token-Prices-Algorithm](https://github.com/CrestPace/Token-Prices-Algorithm) | Custom algorithm that determines token prices for the platform's native tokens, designed to simulate real-world crypto market dynamics |
 
-### Tech Stack
+## 🛠️ Tech Stack
 
 **Frontend:** SvelteKit and UI libraries.  
 Frontend will mostly be developed by AI, but the architecture, user flow, and backend communication logic will be designed by hand.
@@ -70,9 +72,9 @@ Frontend will mostly be developed by AI, but the architecture, user flow, and ba
 Mainly Go, with Rust used for RPC node communication, event listening, and token price polling.
 
 **Contracts:** Solidity.  
-The target blockchain is yet to be finalized but will most likely be Ethereum.
+The target blockchain is yet to be finalized.
 
-### Contributors
+## 👥 Contributors
 
 The core maintainers are [Rehoboth](https://github.com/AlphaTechini) and [Emmanuel](https://github.com/emma31-dev).
 
@@ -84,7 +86,7 @@ Backend and contracts will aim to have at least **50% of code handwritten**.
 
 All AI changes to these repos will be verified manually.
 
-### Review
+## 🔍 Review
 
 **CodeRabbit** will be used in this repo and all PRs must resolve any issue raised by CodeRabbit that does not deviate from the architecture.
 
