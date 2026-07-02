@@ -26,3 +26,5 @@ All AI changes to these repos will be verified manually.
 ### Review
 
 **CodeRabbit** will be used in this repo and all PRs must make sure to resolve any issue raised by CodeRabbit that doesn't deviate from the architecture.
+
+> AI development rules for this org: [AGENTS.md](AGENTS.md)
