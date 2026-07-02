@@ -6,19 +6,27 @@
 
 It is a one-stop fintech application designed to solve all of your financial needs, combining traditional banking features with the speed and flexibility of cryptocurrency.
 
+&nbsp;
+
 ## ✨ Features
 
 ### 💳 Virtual Accounts and Cards
 
 Create virtual accounts and access full card details (card number, CVV, expiry, and billing address). Virtual cards are provisioned quickly and ready for use within the blink of an eye.
 
+&nbsp;
+
 ### 💸 Transaction Management
 
 Send payments and receive deposits in the cryptocurrency (or multiple cryptocurrencies) of your choice. All transactions are optimized for speed, giving the platform its name.
 
+&nbsp;
+
 ### 🔄 Peer-to-Peer Transfers
 
 Send funds to other CrestPace users by their unique username. No wallet addresses, no QR codes -- just type a username and hit send.
+
+&nbsp;
 
 ### 🔁 Automatic Conversion and Liquidity
 
@@ -26,31 +34,45 @@ Balances are automatically converted between cryptocurrencies, stablecoins, and 
 
 **Multi-token payment support:** If the balance in one token is insufficient for a transaction, the system will pull from multiple tokens in the user's wallet based on the user's choice and convert them on the fly to complete the send.
 
+&nbsp;
+
 ### 💰 Fixed Interest Savings
 
 Earn interest on saved cryptocurrency held within the bank. Interest payments are disbursed in either USDT or USDC stable coin.
+
+&nbsp;
 
 ### 📊 Inbuilt Portfolio Management
 
 Manage a crypto portfolio directly inside the app. Includes automatic stop-losses that convert cryptocurrencies to stablecoins during market downturns based on user-defined thresholds, protecting value without manual intervention.
 
+&nbsp;
+
 ### 🏦 Lending Services
 
 Borrow and lend funds through the platform. CrestPace functions as a full fintech institution by enabling credit markets for its users.
+
+&nbsp;
 
 ### 🔔 Transaction Notifications
 
 Push and in-app notifications for all account activity: incoming deposits, completed sends, failed conversions, stop-loss triggers, and interest payouts.
 
+&nbsp;
+
 ### 🛡️ Compliance and KYC
 
 Identity verification and transaction monitoring. Includes a liveness check built from scratch in-house. Risk scoring will also be added.
+
+&nbsp;
 
 ## 🧱 Architecture
 
 Before contributing or making assumptions about how anything works, read [architecture_decisions.md](architecture_decisions.md). This document tracks the key technical decisions that shape the entire codebase.
 
 Skipping it leads to assumptions that are likely wrong. For example: CrestPace relies on as few external services as possible. Standard industry features are coded from scratch rather than outsourced to third-party APIs.
+
+&nbsp;
 
 ## 📂 Repositories
 
@@ -63,6 +85,8 @@ Skipping it leads to assumptions that are likely wrong. For example: CrestPace r
 | [Web-UI](https://github.com/CrestPace/Web-UI) | Website and web-based user interface |
 | [Token-Prices-Algorithm](https://github.com/CrestPace/Token-Prices-Algorithm) | Custom algorithm that determines token prices for the platform's native tokens, designed to simulate real-world crypto market dynamics |
 
+&nbsp;
+
 ## 🛠️ Tech Stack
 
 **Frontend:** SvelteKit and UI libraries.  
@@ -73,6 +97,8 @@ Mainly Go, with Rust used for RPC node communication, event listening, and token
 
 **Contracts:** Solidity.  
 The target blockchain is yet to be finalized.
+
+&nbsp;
 
 ## 👥 Contributors
 
@@ -85,6 +111,8 @@ The backend and contracts are where contributors are needed most. Preferably 2 m
 Backend and contracts will aim to have at least **50% of code handwritten**.
 
 All AI changes to these repos will be verified manually.
+
+&nbsp;
 
 ## 🔍 Review
 
