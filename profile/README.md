@@ -7,7 +7,7 @@ Contributions are welcome. This org is also to showcase high level of competence
 ### Tech Stack
 
 **Frontend:** SvelteKit and UI libraries.  
-Frontend will mostly be developed by AI. But don't worry — that will be code only; we will handle the architecture, user flow, and backend communication logic.
+Frontend will mostly be developed by AI. But don't worry that will be code only; we will handle the architecture, user flow, and backend communication logic.
 
 **Backend:** Go and Rust.  
 Mainly Go but Rust will be used where needed.
