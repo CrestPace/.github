@@ -1,34 +1,91 @@
 ## Welcome 👋
 
-**This org is meant to be used for developing a production-grade Crypto-native Neo Bank.**
+**CrestPace** is a crypto-native neobank built for peak performance and fast transaction times. The name reflects the platform's emphasis on providing peak quality services with low-latency.
 
-Contributions are welcome. This org is also to showcase high level of competence in developing Real World Fintech Products.
+It is a one-stop fintech application designed to solve all of your financial needs, combining traditional banking features with the speed and flexibility of cryptocurrency.
+
+### Features
+
+#### Virtual Accounts and Cards
+
+Create virtual accounts and access full card details (card number, CVV, expiry, and billing address). Virtual cards are provisioned quickly and ready for use within the blink of an eye.
+
+#### Transaction Management
+
+Send payments and receive deposits in the cryptocurrency (or multiple cryptocurrencies) of your choice. All transactions are optimized for speed, giving the platform its name.
+
+#### Peer-to-Peer Transfers
+
+Send funds to other CrestPace users by their unique username. No wallet addresses, no QR codes -- just type a username and hit send.
+
+#### Automatic Conversion and Liquidity
+
+Balances are automatically converted between cryptocurrencies, stablecoins, and native fiat (such as USD) based on the user's preferences and the transaction context.
+
+**Multi-token payment support:** If the balance in one token is insufficient for a transaction, the system will pull from multiple tokens in the user's wallet based on the user's choice and convert them on the fly to complete the send.
+
+#### Fixed Interest Savings
+
+Earn interest on saved cryptocurrency held within the bank. Interest payments are disbursed in either USDT or USDC stable coin.
+
+#### Inbuilt Portfolio Management
+
+Manage a crypto portfolio directly inside the app. Includes automatic stop-losses that convert cryptocurrencies to stablecoins during market downturns based on user-defined thresholds, protecting value without manual intervention.
+
+#### Lending Services
+
+Borrow and lend funds through the platform. CrestPace functions as a full fintech institution by enabling credit markets for its users.
+
+#### Transaction Notifications
+
+Push and in-app notifications for all account activity: incoming deposits, completed sends, failed conversions, stop-loss triggers, and interest payouts.
+
+#### Compliance and KYC
+
+Identity verification and transaction monitoring. Includes a liveness check built from scratch in-house. Risk scoring will also be added. 
+
+### Architecture
+
+Before contributing or making assumptions about how anything works, read [architecture_decisions.md](architecture_decisions.md). This document tracks the key technical decisions that shape the entire codebase.
+
+Skipping it leads to assumptions that are likely wrong. For example: CrestPace relies on as few external services as possible. Standard industry features are coded from scratch rather than outsourced to third-party APIs.
+
+### Repositories
+
+| Repository | Description |
+|---|---|
+| [Backend](https://github.com/CrestPace/Backend) | Core server-side logic, APIs, and infrastructure |
+| [contract](https://github.com/CrestPace/contract) | Smart contracts for the platform's on-chain functionality |
+| [contract-listener](https://github.com/CrestPace/contract-listener) | Listens for contract events and errors, polishes price data, and manages RPC connections |
+| [App-UI](https://github.com/CrestPace/App-UI) | Mobile application user interface |
+| [Web-UI](https://github.com/CrestPace/Web-UI) | Website and web-based user interface |
+| [Token-Prices-Algorithm](https://github.com/CrestPace/Token-Prices-Algorithm) | Custom algorithm that determines token prices for the platform's native tokens, designed to simulate real-world crypto market dynamics |
 
 ### Tech Stack
 
 **Frontend:** SvelteKit and UI libraries.  
-Frontend will mostly be developed by AI. But don't worry that will be code only; we will handle the architecture, user flow, and backend communication logic.
+Frontend will mostly be developed by AI, but the architecture, user flow, and backend communication logic will be designed by hand.
 
 **Backend:** Go and Rust.  
-Mainly Go but Rust will be used for establishing communication to the rpc node for event listening and token price polling.
+Mainly Go, with Rust used for RPC node communication, event listening, and token price polling.
 
 **Contracts:** Solidity.  
-The blockchain to be used is yet to be discussed but it will be most likely ethereum.
+The target blockchain is yet to be finalized but will most likely be Ethereum.
 
 ### Contributors
 
-The core maintainers for the projects are [Rehoboth](https://github.com/AlphaTechini) and [Emmanuel](https://github.com/emma31-dev).
+The core maintainers are [Rehoboth](https://github.com/AlphaTechini) and [Emmanuel](https://github.com/emma31-dev).
 
-Any vunerability finding, Feature request or Suggested change should be communicated to them first before implementation to avoid unnecessary waste of anyone's time.
+Any vulnerability finding, feature request, or suggested change should be communicated to them first before implementation to avoid unnecessary waste of time.
 
-It's the backend and contracts that we will need a lot of contributors in. Preferably 2 max for frontend.
+The backend and contracts are where contributors are needed most. Preferably 2 max for frontend.
 
-Backend and contracts will aim to have at least **50% of code handwritten**. It would have been 100% if possible but it might not be necessary.
+Backend and contracts will aim to have at least **50% of code handwritten**.
 
 All AI changes to these repos will be verified manually.
 
 ### Review
 
-**CodeRabbit** will be used in this repo and all PRs must make sure to resolve any issue raised by CodeRabbit that doesn't deviate from the architecture.
+**CodeRabbit** will be used in this repo and all PRs must resolve any issue raised by CodeRabbit that does not deviate from the architecture.
 
 > AI development rules for this org: [AGENTS.md](AGENTS.md)
