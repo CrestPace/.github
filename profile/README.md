@@ -1,4 +1,4 @@
-## Welcome traveller👋
+## Welcome 👋
 
 **This org is meant to be used for developing a production-grade Crypto-native Neo Bank.**
 
