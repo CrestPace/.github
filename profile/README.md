@@ -1,4 +1,4 @@
-## Hi there 👋
+## Welcome traveller👋
 
 **This org is meant to be used for developing a production-grade Crypto-native Neo Bank.**
 
@@ -10,12 +10,16 @@ Contributions are welcome. This org is also to showcase high level of competence
 Frontend will mostly be developed by AI. But don't worry that will be code only; we will handle the architecture, user flow, and backend communication logic.
 
 **Backend:** Go and Rust.  
-Mainly Go but Rust will be used where needed.
+Mainly Go but Rust will be used for establishing communication to the rpc node for event listening and token price polling.
 
-**Contracts:** Rust.  
-The blockchain to be used is yet to be discussed but it will be one that uses Rust, obviously.
+**Contracts:** Solidity.  
+The blockchain to be used is yet to be discussed but it will be most likely ethereum.
 
 ### Contributors
+
+The core maintainers for the projects are [Rehoboth](https://github.com/AlphaTechini) and [Emmanuel](https://github.com/emma31-dev).
+
+Any vunerability finding, Feature request or Suggested change should be communicated to them first before implementation to avoid unnecessary waste of anyone's time.
 
 It's the backend and contracts that we will need a lot of contributors in. Preferably 2 max for frontend.
 
