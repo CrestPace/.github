@@ -1,37 +1,28 @@
 ## Hi there 👋
 
-This org is meant to be used for develooping a production-grade Crypto-native Neo Bank.
+**This org is meant to be used for developing a production-grade Crypto-native Neo Bank.**
 
-Contributions are welcome. This org is also to showcase High level of competence in developing Real World Fintech Products
+Contributions are welcome. This org is also to showcase high level of competence in developing Real World Fintech Products.
 
-Tech Stack: 
+### Tech Stack
 
-Frontend : Sveltekit and UI libraries.
-Frontend will mostly be developed by AI. But don't worry that will be code only, we will handle the architecture, userflow and backend communication logic.
+**Frontend:** SvelteKit and UI libraries.  
+Frontend will mostly be developed by AI. But don't worry — that will be code only; we will handle the architecture, user flow, and backend communication logic.
 
-Backend: Go and Rust
-Mainly Go but Rust will be used were needed.
+**Backend:** Go and Rust.  
+Mainly Go but Rust will be used where needed.
 
-Contract: Rust 
-The blcokcahin to be used is yet to be discussed but it'll be oe tht uses Rust obviously.
+**Contracts:** Rust.  
+The blockchain to be used is yet to be discussed but it will be one that uses Rust, obviously.
 
+### Contributors
 
-Its the backend and contracts that we will need a lot of contributors in. Preferably 2 max for frontend.
+It's the backend and contracts that we will need a lot of contributors in. Preferably 2 max for frontend.
 
-Backend and Contract will aim to have atleast 50% of code handwritten, it would have been 100% if possible but it might not be necessary.
+Backend and contracts will aim to have at least **50% of code handwritten**. It would have been 100% if possible but it might not be necessary.
 
 All AI changes to these repos will be verified manually.
 
-Code Rabbit will be used in this repo and all PRs must mmake sure to resolve any issue raised by code rabbit that doesn't deviate from the architecture.
+### Review
 
-
-<!--
-
-**Here are some ideas to get you started:**
-
-🙋‍♀️ A short introduction - what is your organization all about?
-🌈 Contribution guidelines - how can the community get involved?
-👩‍💻 Useful resources - where can the community find your docs? Is there anything else the community should know?
-🍿 Fun facts - what does your team eat for breakfast?
-🧙 Remember, you can do mighty things with the power of [Markdown](https://docs.github.com/github/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax)
--->
+**CodeRabbit** will be used in this repo and all PRs must make sure to resolve any issue raised by CodeRabbit that doesn't deviate from the architecture.
