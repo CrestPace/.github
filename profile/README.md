@@ -72,6 +72,8 @@ Before contributing or making assumptions about how anything works, read [archit
 
 Skipping it leads to assumptions that are likely wrong. For example: CrestPace relies on as few external services as possible. Standard industry features are coded from scratch rather than outsourced to third-party APIs.
 
+Features currently in planning are tracked separately in [features.md](features.md).
+
 &nbsp;
 
 ## 📂 Repositories
