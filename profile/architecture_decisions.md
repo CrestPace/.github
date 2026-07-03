@@ -15,6 +15,25 @@ A faucet will be used to dispense testnet tokens for the supported currencies. I
 
 The blockchain will be chosen for speed, strong performance, and a positive developer experience.
 
+## Token Mirroring
+
+CrestPace deploys its own versions of tokens on the BNB testnet. Each mirrored token tracks the live price of its real-world counterpart and carries that price on-chain. When the price of the real-world token changes, it reflects on the mirrored token.
+
+This means every transaction on the platform uses prices that exist directly on-chain with the tokens themselves. The mirrored tokens behave as though they have a built-in reserve price, removing the need to consult an external price feed at the point of every transaction.
+
+### How It Works
+
+- A mirrored USDC, ETH, BTC, or any other supported token is deployed as a smart contract on BNB testnet.
+- Each contract holds a price field that is updated by an off-chain price feed service. The feed polls external APIs and writes the current price to the contract when a change is detected.
+- Transfers, swaps, and balance calculations read the price directly from the token contract, not from a separate oracle contract or an API call.
+- The price is always available on-chain, so any on-chain logic that needs it (e.g., a swap contract, a stop-loss trigger, an interest calculation) can access it without an additional external call.
+
+### Trade-Off
+
+- **Up-front complexity.** Deploying and maintaining mirrored tokens for every supported asset adds initial contract work and an ongoing price-feed pipeline. This is more setup than simply calling a price API from the backend.
+- **Long-term simplicity.** Once deployed, all on-chain components (contracts, listeners, the backend ledger) read from a single authoritative source. There is no risk of the backend and on-chain logic disagreeing on the current price because they queried different APIs at slightly different times.
+- **Price feeds remain an external dependency.** The mirrored token still relies on an off-chain service to write prices. The point is not to eliminate the feed, but to consolidate it into one pipeline that feeds all downstream consumers.
+
 ## Principle: Minimal External Dependencies
 
 CrestPace is built to rely on as few external services as possible. Standard industry features that most fintechs buy off the shelf are built from scratch within the project.
