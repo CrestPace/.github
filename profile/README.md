@@ -74,6 +74,8 @@ Skipping it leads to assumptions that are likely wrong. For example: CrestPace r
 
 Features currently in planning are tracked separately in [features.md](features.md).
 
+Development is organized into stages driven by the user flow rather than by feature alone. See [stages.md](stages.md) for the structure and rationale behind this approach.
+
 &nbsp;
 
 ## 📂 Repositories
