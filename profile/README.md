@@ -112,7 +112,7 @@ Any vulnerability finding, feature request, or suggested change should be commun
 
 The backend and contracts are where contributors are needed most. Preferably 2 max for frontend.
 
-Backend and contracts will aim to have at least **50% of code handwritten**.
+Backend and contracts will aim to have at least **70% of code handwritten**.
 
 All AI changes to these repos will be verified manually.
 
