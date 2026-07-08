@@ -29,3 +29,4 @@ This feature is deferred to Phase 2 to keep Phase 1 focused on core payment flow
 Lock a specific amount of funds for a set period of time and earn a fixed percentage reward in return. This is a simple fixed-deposit model: the user chooses an amount, locks it for a term (starting at 30 days), and receives the reward when the term ends.
 
 Early unlocking is supported but penalized. If a user unlocks funds before the term expires, the reward percentage is slashed based on the remaining balance of the locked tokens. This protects the integrity of the fixed-term model while giving users an escape hatch when needed.
+
