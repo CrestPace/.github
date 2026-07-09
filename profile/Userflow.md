@@ -32,10 +32,14 @@ Token Allocation:
 
   After that the user will be asked to choose the percentage to allocate per token. We will start with 10 tokens offering a mix of variety and ease of deploying and development. Though the architecture will be such that we can easily allow usage of up to 100 tokens without hiccups.
 
+  If no token is selected it will default to USDC I don't want to be managing virtual money.
+
   This 10 tokens also helps for the architecture I designed for the swap logic.
 
 Stop Losses and Locking funds:
   Stop losses was a feature that I wanted to implement since the beginning planning phases of the project. However locking funds was not.
+
+  Also important note: User's lock funds before allocation. 
   
   We planned to allow user to create a savings account and set the period they want to save it for. Then get the interest after the time has been reached. 
   

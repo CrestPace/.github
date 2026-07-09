@@ -131,3 +131,79 @@ A parallel version of CrestPace runs entirely on platform-native tokens whose pr
 - **Go** for the majority of backend services: API layer, business logic, transaction engine, ledger, and interest calculations. Chosen for performance, simplicity, and strong concurrency primitives.
 - **Rust** for performance-critical paths that sit close to the blockchain: RPC communication, event listening, and token price polling. Chosen for safety guarantees and low-level control when interacting with nodes directly.
 - **Solidity** for smart contracts.
+
+
+## Token Allocation and Circulation
+
+Even if this isn't a real bank we still want to mimic the real ones as much as possible.
+
+So first how do we get the tokens(remember we choose Web3 not just because we can actually carry out transfers of tokens with monetary value. But cos if we didn't then we would bascally be storing user's money as just numbers. It won't hold weight. The thought of it would make me quit doing this).
+
+With Crypto Currencies even though on testnet we carry out actual blcokchain interactions. That can be verified. We aren't mocking the money here.
+
+So, how will we do this?
+
+Minting... We mint our own tokens. Here's the catch: They are going to be mirrors of real popular crypto currencies. What this means is our minted token price = price of real token e.g BTC
+
+Well we might not be able to create a token literally called BTC even on testnet cos its pobably taken but thats fine. whatever name we assign will still have part of the original token name in it. Plus the users will still see the names they are familar with on the frontend. This is to improve User Experience.
+
+The backend will handle all the mapping infact a better method will be to make sure that they are mapped in the frontend that way no need for backend mapping however the backend will still validate token symbol to revent any potential security vulnerabilites.
+
+So how do we determine token supply? Do we just mint a billion tokens for each token we will be mirroring and call it a day. NO! Absolutely not! It defies the real bank mimicking ideal.
+
+So, what do we do? Well we mint on demand hence the Genius Onboarding flow were we accurately get the average salary of the individaul and ask how many percet ot deposit.
+
+Why this?
+
+Let me explain. In the real world you want to use this Neobank for regular day to day transactions without having to use your standard bank. You receive your pay for the month, ponder on the amount to deposit in the Neobank, then you proceed to send that amount there.
+
+Thats exactly the flow we are trying to recreate here... 
+
+Now for actual token allocation just like you would choose how much to spend on different things for the month or how much to invest in different stocks and obviously how much to put in different crypto currencies. We allow you to set the percentage of your deposited amount you allocate for each token.
+
+Now after you have allocated we mint the exact (quantity+5%) incase the price changes within the short time. ALthough we fetch the price just before minting, crypto is volatile. Now here's the catch.. We also mint the stable coin equivalent. i.e your preferred stable coin choosing when they wanted to lock funds. Same stuff even if they didn't choose to lcok funds they wil still have to put preferred stable coin.
+
+Now why also mint stble coins.
+I thought of something we only actually have access to the locked funds... The other tokens in circulation are in the user's active accounts. So when we want to implement stop losses how do we get a massive amount of stablecoin equivalent of a user's active balance... Simple by minting that exact amount at the begining.
+
+Now here's the moment i realised this was a genius architecture by me:
+Later on when the market stabilizes a bit users want to buy tokens again. Well guess what since we are mimicking real banks. when the stop losses feature swaps form the tokens they own to stable coins. We end up storing the tokens they held before. ..Yh maybe I didn't specify but we have our own store where:
+  1. The deposit to activate stop loss is stored
+  2. The swaps when stop loss activates is stored.
+This enables a proper cycle.
+  However, I quickly noticed flaws: Its crypto what if the user's portfolio improved in value. 
+  Well its crypto another person's portfolio defintely reduced in value. So the balance each other out. The store is like an aggregate pool. Its not seperated per user. 
+
+  Even with that what if we apply the same + 5% logic to the stable coins we mint... The possibility of encountering any trouble = very low.
+  Now there's also the way banks work. I had to read articles and watch videos abut how real banks, NeoBanks, Ledgers work. 
+
+  The main part has to do with lending where they bet not everyone is going to withdraw all their funds at once. Adding this scenario. Its impossible for any problems to occur.
+
+  Talk about sheer human intelligence. IMPORTANT: NO AI was consulted or assited to the creation of this near-perfect system. Proudly made by a human who hasn't yet fried his brain cells. 
+
+
+SWAPS:
+   Now the part I also want to talk about... In this case I have not been able to find a better solution than what individual banks give. However, remeber the + 5% the excess is also stored in our pool. And i meant +5% for each token.
+
+   When a user requests a swap we first check if we can fulfill with only our pool without the reserves for that token going below 5%. 
+
+   If it does then we have to act like banks... use someone's/a group of people savings account... 
+   I haven't yet come up with an architecture for using a group of people...
+
+   For the single person it will be the one with the least number of transactions. 
+
+   Now does this mean the user will wake up to see a debit alert or the balance decrease? Nope... 
+   Meaning I'll have to properly leabel this particular operation such that the backend doesn't trigger any updates to the user's viewed balance. This makes me want to implement a dual balance architecture:
+
+   Here the user has the virtual balance: what he/she sees.   AND 
+   The actual balance: This one has all the user's token movement, Infact this will be directly tied to the ledger. 
+   I haven't thought about this enough yet though. 
+
+   There is one caveat though we have to make the virtual balance + non-lending operations from the ledger source of truth. 
+
+   Honestly the virtual = actual - lending operations.
+
+   This is better and more direct meaning we approve any transaction the user requests using virtual as source of truth. The actual is only going to be referened to see if we need to borrow or use our pool to restock the user's balance bejnd the scenes. Making atcual = virtual once again.
+
+  I have tried my best to design the architecture in a way that doesn't mint tokens again after the onbaording causing it to be more like a real bank works.
+   
