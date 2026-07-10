@@ -38,7 +38,7 @@ Balances are automatically converted between cryptocurrencies, stablecoins, and 
 
 ### 💰 Fixed Interest Savings
 
-Earn interest on saved cryptocurrency held within the bank. Interest payments are disbursed in either USDT or USDC stable coin.
+Lock cryptocurrency in a savings account for a fixed term (starting at 30 days) and earn a fixed percentage reward. Interest is accrued daily, so on full withdrawal the user receives the principal plus the interest already earned. Early or partial withdrawal is supported without penalty: the interest is simply recalculated going forward on the new lower balance. Interest payments are disbursed in either USDT or USDC stablecoin.
 
 &nbsp;
 

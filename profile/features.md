@@ -26,7 +26,7 @@ This feature is deferred to Phase 2 to keep Phase 1 focused on core payment flow
 
 ## Deposit and Lock Funds (Fixed-Term Staking)
 
-Lock a specific amount of funds for a set period of time and earn a fixed percentage reward in return. This is a simple fixed-deposit model: the user chooses an amount, locks it for a term (starting at 30 days), and receives the reward when the term ends.
+Lock a specific amount of funds for a set period of time and earn a fixed percentage reward in return. This is a simple fixed-deposit model: the user chooses an amount, locks it for a term (starting at 30 days), and earns interest daily.
 
-Early unlocking is supported but penalized. If a user unlocks funds before the term expires, the reward percentage is slashed based on the remaining balance of the locked tokens. This protects the integrity of the fixed-term model while giving users an escape hatch when needed.
+Early unlocking is supported without penalty. Interest is accrued daily, so on full withdrawal the user receives the principal plus the interest already earned. On partial withdrawal, the interest is recalculated going forward on the new lower balance. This gives users an escape hatch while keeping the model fair.
 

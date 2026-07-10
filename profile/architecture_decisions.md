@@ -34,6 +34,27 @@ This means every transaction on the platform uses prices that exist directly on-
 - **Long-term simplicity.** Once deployed, all on-chain components (contracts, listeners, the backend ledger) read from a single authoritative source. There is no risk of the backend and on-chain logic disagreeing on the current price because they queried different APIs at slightly different times.
 - **Price feeds remain an external dependency.** The mirrored token still relies on an off-chain service to write prices. The point is not to eliminate the feed, but to consolidate it into one pipeline that feeds all downstream consumers.
 
+## Price Feed Fallback System
+
+The off-chain price feed service depends on external APIs. To prevent downtime, a three-tier fallback system is used.
+
+### Primary API
+
+The main option is a primary API with a very generous free tier. This should allow fetching prices as many times as possible for free.
+
+### Fallbacks
+
+Fallbacks are essential in two cases:
+
+1. **Quota exhaustion.** If the monthly limit on the first API is surpassed, the fallback APIs cover the remaining requests. The background cron job for regular price refreshes is designed so that it does not exhaust the monthly quota on its own.
+2. **Event-driven capacity.** Whenever a user triggers a transaction, the system still needs to fetch prices and update the tokens. Enough request capacity must be left on the primary API for these event-driven requests, and the fallbacks absorb the overflow.
+
+### Redundancy Scenarios
+
+1. If the first API fails, the system moves to the second one.
+2. In the unlikely scenario that the second API also fails, a third API serves as the backup.
+3. Alternatively, if quotas on both the first and second APIs are exhausted due to high request volume, the third API covers the remaining amount needed before the end of the month.
+
 ## Principle: Minimal External Dependencies
 
 CrestPace is built to rely on as few external services as possible. Standard industry features that most fintechs buy off the shelf are built from scratch within the project.
@@ -68,29 +89,19 @@ Risk scoring is planned for a later phase.
 
 CrestPace avoids on-ramping real currencies and stays off mainnets during early phases. Instead of requiring users to deposit real funds, an allocation method is used to seed each user's balance. The goal is to make the experience as realistic as possible without touching real money.
 
-The fund allocation process is split across two phases.
+After completing the KYC flow (liveness check and government ID match), the user provides employment details: industry, exact role, and the city they work from. The system performs a web search to determine the average salary for that specific role in that specific geographic area.
 
-### Phase 1: Manual Allocation
+The user then chooses a percentage of that salary to use as their deposit amount. This ensures each user starts with a balance that reflects real-world earning data rather than an arbitrary fixed number, while still giving the user control over how much of their salary they want to allocate.
 
-After completing the KYC flow (liveness check and government ID match), the user manually enters the deposit amount they want allocated to their account. No AI integration, no web search -- just a direct number from the user. The system accepts the figure and proceeds to token selection.
+### Token Selection
 
-### Phase 2: AI-Driven Allocation
-
-The manual flow is replaced with an automated salary lookup:
-
-1. **User Details.** After KYC, the user provides employment details: job title, geographic location, specific role, and industry (e.g., a software engineer at an agricultural startup in Lagos).
-
-2. **AI-Driven Fund Allocation.** The system performs a web search to determine the average salary for that specific role in that specific geographic area. The retrieved figure becomes the user's initial deposit amount. This ensures each user starts with a balance that reflects real-world earning data rather than an arbitrary fixed number.
-
-### Token Selection (Both Phases)
-
-Regardless of how the deposit amount is determined, the user selects which tokens to allocate their deposit to and defines the percentage each token should receive. For example, a user with a $5,000 deposit might allocate 60% to USDC, 30% to ETH, and 10% to BTC. The system distributes the deposit across the chosen tokens according to the user's specified percentages.
+The user selects which tokens to allocate their deposit to and defines the percentage each token should receive. For example, a user with a $5,000 deposit might allocate 60% to USDC, 30% to ETH, and 10% to BTC. The system distributes the deposit across the chosen tokens according to the user's specified percentages.
 
 ### Design Rationale
 
 - **No real on-ramp, no mainnet risk.** Early development and testing happen entirely on testnets with testnet tokens. There is zero financial liability.
-- **Phase 1 ships faster.** Manual allocation removes the AI integration from the critical path, so the onboarding flow can be built and tested without depending on an external search pipeline.
-- **Phase 2 adds realism.** Once the core platform is stable, the AI-driven salary lookup produces deposit amounts that feel authentic. A software engineer in San Francisco and a teacher in Nairobi will receive materially different starting balances, which mirrors how the platform would behave in production.
+- **Realistic starting balances.** The salary lookup produces deposit amounts that feel authentic. A software engineer in San Francisco and a teacher in Nairobi will receive materially different starting balances, which mirrors how the platform would behave in production.
+- **User agency over deposit size.** Letting the user choose a percentage of their salary rather than forcing the full amount respects their preferences and mirrors real life, where you decide how much of your pay to deposit in your bank.
 - **User agency over token mix.** Pushing all deposits into a single default token would force users into an allocation they did not choose. Letting the user define percentages up front respects their preferences and educates them about multi-token portfolio construction from day one.
 - **Built in-house.** The scheduling engine for recurring allowances and the bulk transfer processor (see [features.md](features.md)) handle the disbursement of these allocated funds without external payment services, consistent with the principle of minimal external dependencies.
 
@@ -102,17 +113,16 @@ This feature is deferred to Phase 2 so Phase 1 stays focused on core transfers, 
 
 ## Deposit and Lock Funds (Fixed-Term Staking)
 
-Users can lock funds for a fixed term and earn a percentage-based reward at maturity. This is a simple staking model, not a dynamic yield product. The architecture is designed around three rules:
+Users can lock funds for a fixed term and earn a percentage-based reward. This is a simple staking model, not a dynamic yield product. The architecture is designed around three rules:
 
 1. **Fixed term.** The initial term is 30 days. Shorter or longer terms may be added later based on demand, but there is no variable-duration logic in Phase 1.
 2. **Fixed reward rate.** For every 30-day period, the current placeholder rate is 2%. This figure is not final. Market research will be conducted later to determine a defensible methodology for setting the actual percentage (e.g., benchmarking against comparable on-chain staking yields or traditional fixed-deposit rates in target regions).
-3. **Early unlock with slashing.** Users can unlock funds before the term ends, but the reward is reduced. The penalty is calculated against the remaining balance of the locked tokens at the time of early unlock, so partial unlocks are implicitly penalized as well. The exact slashing curve will be defined when the rate methodology is finalized.
+3. **Daily interest accrual.** Interest is calculated and added daily based on the deposited amount, not as a lump sum at maturity. On full withdrawal, the user receives the principal plus the interest that was already accrued daily. On partial withdrawal, the interest is recalculated going forward using the new lower balance. This keeps partial withdrawals fair without any complex penalty logic.
 
 ### Design Rationale
 
 - **Predictable, not algorithmic.** A fixed rate keeps the smart contract and backend simple. There is no need for an on-chain oracle, yield aggregator, or dynamic rate engine. The rate is set administratively and updated only when market research justifies a change.
-- **Slashing protects the model.** Without a penalty for early exits, users could deposit right before the reward payout and earn a full-term return for a short lock, breaking the economics. Slashing ensures rewards are proportional to the actual lock duration.
-- **Separate from the interest savings feature.** The savings feature in the main README pays interest on held balances without a lock. This feature is a distinct product: voluntary lock-up in exchange for a higher, guaranteed return.
+- **Daily accrual is simpler than slashing.** The original idea was to invalidate interest on early full withdrawal and pay based on what's left for partial. Daily accrual replaces that: the user keeps what was earned up to the point of withdrawal, and partial withdrawals just recalculate on the new balance. No penalty, no slashing curve to define.
 
 ## P2P Transfers
 
@@ -135,75 +145,75 @@ A parallel version of CrestPace runs entirely on platform-native tokens whose pr
 
 ## Token Allocation and Circulation
 
-Even if this isn't a real bank we still want to mimic the real ones as much as possible.
+Even if this isn't a real bank, we still want to mimic the real ones as much as possible.
 
-So first how do we get the tokens(remember we choose Web3 not just because we can actually carry out transfers of tokens with monetary value. But cos if we didn't then we would bascally be storing user's money as just numbers. It won't hold weight. The thought of it would make me quit doing this).
+So first, how do we get the tokens (remember we choose Web3 not just because we can actually carry out transfers of tokens with monetary value, but cos if we didn't then we would basically be storing user's money as just numbers. It won't hold weight. The thought of it would make me quit doing this).
 
-With Crypto Currencies even though on testnet we carry out actual blcokchain interactions. That can be verified. We aren't mocking the money here.
+With cryptocurrencies, even though on testnet, we carry out actual blockchain interactions that can be verified. We aren't mocking the money here.
 
 So, how will we do this?
 
-Minting... We mint our own tokens. Here's the catch: They are going to be mirrors of real popular crypto currencies. What this means is our minted token price = price of real token e.g BTC
+Minting... We mint our own tokens. Here's the catch: They are going to be mirrors of real popular cryptocurrencies. What this means is our minted token price = price of real token e.g. BTC.
 
-Well we might not be able to create a token literally called BTC even on testnet cos its pobably taken but thats fine. whatever name we assign will still have part of the original token name in it. Plus the users will still see the names they are familar with on the frontend. This is to improve User Experience.
+Well, we might not be able to create a token literally called BTC even on testnet cos it's probably taken but that's fine. Whatever name we assign will still have part of the original token name in it. Plus the users will still see the names they are familiar with on the frontend. This is to improve User Experience.
 
-The backend will handle all the mapping infact a better method will be to make sure that they are mapped in the frontend that way no need for backend mapping however the backend will still validate token symbol to revent any potential security vulnerabilites.
+The backend will handle all the mapping. In fact, a better method will be to make sure that they are mapped in the frontend, that way no need for backend mapping. However, the backend will still validate token symbol to prevent any potential security vulnerabilities.
 
-So how do we determine token supply? Do we just mint a billion tokens for each token we will be mirroring and call it a day. NO! Absolutely not! It defies the real bank mimicking ideal.
+So how do we determine token supply? Do we just mint a billion tokens for each token we will be mirroring and call it a day? NO! Absolutely not! It defies the real bank mimicking idea.
 
-So, what do we do? Well we mint on demand hence the Genius Onboarding flow were we accurately get the average salary of the individaul and ask how many percet ot deposit.
+So, what do we do? Well, we mint on demand hence the Genius Onboarding flow where we accurately get the average salary of the individual and ask how many percent to deposit.
 
 Why this?
 
-Let me explain. In the real world you want to use this Neobank for regular day to day transactions without having to use your standard bank. You receive your pay for the month, ponder on the amount to deposit in the Neobank, then you proceed to send that amount there.
+Let me explain. In the real world you want to use this neobank for regular day-to-day transactions without having to use your standard bank. You receive your pay for the month, ponder on the amount to deposit in the neobank, then you proceed to send that amount there.
 
-Thats exactly the flow we are trying to recreate here... 
+That's exactly the flow we are trying to recreate here...
 
-Now for actual token allocation just like you would choose how much to spend on different things for the month or how much to invest in different stocks and obviously how much to put in different crypto currencies. We allow you to set the percentage of your deposited amount you allocate for each token.
+Now for actual token allocation, just like you would choose how much to spend on different things for the month or how much to invest in different stocks and obviously how much to put in different cryptocurrencies. We allow you to set the percentage of your deposited amount you allocate for each token.
 
-Now after you have allocated we mint the exact (quantity+5%) incase the price changes within the short time. ALthough we fetch the price just before minting, crypto is volatile. Now here's the catch.. We also mint the stable coin equivalent. i.e your preferred stable coin choosing when they wanted to lock funds. Same stuff even if they didn't choose to lcok funds they wil still have to put preferred stable coin.
+Now after you have allocated, we mint the exact (quantity + 5%) in case the price changes within the short time. Although we fetch the price just before minting, crypto is volatile. Now here's the catch. We also mint the stablecoin equivalent, i.e. your preferred stablecoin choosing when they wanted to lock funds. Same stuff even if they didn't choose to lock funds they will still have to put preferred stablecoin.
 
-Now why also mint stble coins.
-I thought of something we only actually have access to the locked funds... The other tokens in circulation are in the user's active accounts. So when we want to implement stop losses how do we get a massive amount of stablecoin equivalent of a user's active balance... Simple by minting that exact amount at the begining.
+Now why also mint stablecoins.
+I thought of something: we only actually have access to the locked funds... The other tokens in circulation are in the user's active accounts. So when we want to implement stop losses, how do we get a massive amount of stablecoin equivalent of a user's active balance... Simple, by minting that exact amount at the beginning.
 
-Now here's the moment i realised this was a genius architecture by me:
-Later on when the market stabilizes a bit users want to buy tokens again. Well guess what since we are mimicking real banks. when the stop losses feature swaps form the tokens they own to stable coins. We end up storing the tokens they held before. ..Yh maybe I didn't specify but we have our own store where:
+Now here's the moment I realised this was a genius architecture by me:
+Later on when the market stabilizes a bit, users want to buy tokens again. Well guess what, since we are mimicking real banks, when the stop losses feature swaps from the tokens they own to stablecoins, we end up storing the tokens they held before. ..Yh maybe I didn't specify but we have our own store where:
   1. The deposit to activate stop loss is stored
   2. The swaps when stop loss activates is stored.
 This enables a proper cycle.
-  However, I quickly noticed flaws: Its crypto what if the user's portfolio improved in value. 
-  Well its crypto another person's portfolio defintely reduced in value. So the balance each other out. The store is like an aggregate pool. Its not seperated per user. 
+  However, I quickly noticed flaws: It's crypto, what if the user's portfolio improved in value.
+  Well it's crypto, another person's portfolio definitely reduced in value. So they balance each other out. The store is like an aggregate pool. It's not separated per user.
 
-  Even with that what if we apply the same + 5% logic to the stable coins we mint... The possibility of encountering any trouble = very low.
-  Now there's also the way banks work. I had to read articles and watch videos abut how real banks, NeoBanks, Ledgers work. 
+  Even with that, what if we apply the same + 5% logic to the stablecoins we mint... The possibility of encountering any trouble = very low.
+  Now there's also the way banks work. I had to read articles and watch videos about how real banks, Neobanks, ledgers work.
 
-  The main part has to do with lending where they bet not everyone is going to withdraw all their funds at once. Adding this scenario. Its impossible for any problems to occur.
+  The main part has to do with lending where they bet not everyone is going to withdraw all their funds at once. Adding this scenario, it's impossible for any problems to occur.
 
-  Talk about sheer human intelligence. IMPORTANT: NO AI was consulted or assited to the creation of this near-perfect system. Proudly made by a human who hasn't yet fried his brain cells. 
+  Talk about sheer human intelligence. IMPORTANT: NO AI was consulted or assisted to the creation of this near-perfect system. Proudly made by a human who hasn't yet fried his brain cells.
 
 
 SWAPS:
-   Now the part I also want to talk about... In this case I have not been able to find a better solution than what individual banks give. However, remeber the + 5% the excess is also stored in our pool. And i meant +5% for each token.
+   Now the part I also want to talk about... In this case I have not been able to find a better solution than what individual banks give. However, remember the + 5%, the excess is also stored in our pool. And I meant +5% for each token.
 
-   When a user requests a swap we first check if we can fulfill with only our pool without the reserves for that token going below 5%. 
+   When a user requests a swap we first check if we can fulfill with only our pool without the reserves for that token going below 5%.
 
-   If it does then we have to act like banks... use someone's/a group of people savings account... 
+   If it does then we have to act like banks... use someone's/a group of people's savings account...
    I haven't yet come up with an architecture for using a group of people...
 
-   For the single person it will be the one with the least number of transactions. 
+   For the single person it will be the one with the least number of transactions.
 
-   Now does this mean the user will wake up to see a debit alert or the balance decrease? Nope... 
-   Meaning I'll have to properly leabel this particular operation such that the backend doesn't trigger any updates to the user's viewed balance. This makes me want to implement a dual balance architecture:
+   Now does this mean the user will wake up to see a debit alert or the balance decrease? Nope...
+   Meaning I'll have to properly label this particular operation such that the backend doesn't trigger any updates to the user's viewed balance. This makes me want to implement a dual balance architecture:
 
-   Here the user has the virtual balance: what he/she sees.   AND 
-   The actual balance: This one has all the user's token movement, Infact this will be directly tied to the ledger. 
-   I haven't thought about this enough yet though. 
+   Here the user has the virtual balance: what he/she sees.   AND
+   The actual balance: This one has all the user's token movement. In fact, this will be directly tied to the ledger.
+   I haven't thought about this enough yet though.
 
-   There is one caveat though we have to make the virtual balance + non-lending operations from the ledger source of truth. 
+   There is one caveat though: we have to make the virtual balance + non-lending operations from the ledger source of truth.
 
    Honestly the virtual = actual - lending operations.
 
-   This is better and more direct meaning we approve any transaction the user requests using virtual as source of truth. The actual is only going to be referened to see if we need to borrow or use our pool to restock the user's balance bejnd the scenes. Making atcual = virtual once again.
+   This is better and more direct meaning we approve any transaction the user requests using virtual as source of truth. The actual is only going to be referenced to see if we need to borrow or use our pool to restock the user's balance behind the scenes. Making actual = virtual once again.
 
-  I have tried my best to design the architecture in a way that doesn't mint tokens again after the onbaording causing it to be more like a real bank works.
+  I have tried my best to design the architecture in a way that doesn't mint tokens again after the onboarding, causing it to be more like a real bank works.
    
