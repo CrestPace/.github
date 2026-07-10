@@ -17,22 +17,24 @@ The blockchain will be chosen for speed, strong performance, and a positive deve
 
 ## Token Mirroring
 
-CrestPace deploys its own versions of tokens on the BNB testnet. Each mirrored token tracks the live price of its real-world counterpart and carries that price on-chain. When the price of the real-world token changes, it reflects on the mirrored token.
+CrestPace deploys its own versions of tokens on the BNB testnet. Each mirrored token represents a real-world cryptocurrency (BTC, ETH, USDC, etc.) and is used for actual transactions on the platform.
 
-This means every transaction on the platform uses prices that exist directly on-chain with the tokens themselves. The mirrored tokens behave as though they have a built-in reserve price, removing the need to consult an external price feed at the point of every transaction.
+Smart contracts cannot make external calls, so prices are not stored on-chain. Instead, the price of the real-world counterpart is fetched from external APIs on-demand. The architecture is event-driven: when a user triggers a transaction request, the backend fetches the exact current price immediately and uses that price for that particular transaction.
+
+This means every transaction uses the real-world price at the moment it is executed, not a stale price written to a contract earlier.
 
 ### How It Works
 
-- A mirrored USDC, ETH, BTC, or any other supported token is deployed as a smart contract on BNB testnet.
-- Each contract holds a price field that is updated by an off-chain price feed service. The feed polls external APIs and writes the current price to the contract when a change is detected.
-- Transfers, swaps, and balance calculations read the price directly from the token contract, not from a separate oracle contract or an API call.
-- The price is always available on-chain, so any on-chain logic that needs it (e.g., a swap contract, a stop-loss trigger, an interest calculation) can access it without an additional external call.
+- A mirrored USDC, ETH, BTC, or any other supported token is deployed as a smart contract on BNB testnet. These contracts handle transfers and balances, not price storage.
+- When a user initiates a transaction, the backend fetches the current price of the real-world token from an external API.
+- The fetched price is used for that specific transaction: conversions, swaps, balance calculations, stop-loss triggers, and interest calculations all use the price fetched at the point of the request.
+- No price is written to the contract. No oracle is consulted on-chain. The fetch happens off-chain in the backend, and the result is applied to the transaction directly.
 
 ### Trade-Off
 
-- **Up-front complexity.** Deploying and maintaining mirrored tokens for every supported asset adds initial contract work and an ongoing price-feed pipeline. This is more setup than simply calling a price API from the backend.
-- **Long-term simplicity.** Once deployed, all on-chain components (contracts, listeners, the backend ledger) read from a single authoritative source. There is no risk of the backend and on-chain logic disagreeing on the current price because they queried different APIs at slightly different times.
-- **Price feeds remain an external dependency.** The mirrored token still relies on an off-chain service to write prices. The point is not to eliminate the feed, but to consolidate it into one pipeline that feeds all downstream consumers.
+- **Up-front complexity.** Deploying and maintaining mirrored tokens for every supported asset adds initial contract work. The price-fetching pipeline also needs to be built and hardened with fallbacks.
+- **Event-driven accuracy.** Because the price is fetched at the point of each transaction, the system always uses the most current price available. There is no risk of transacting against a stale on-chain price that was written minutes or hours ago.
+- **Price feeds remain an external dependency.** Every transaction depends on an external API call succeeding. The fallback system (see below) is what makes this reliable.
 
 ## Price Feed Fallback System
 
