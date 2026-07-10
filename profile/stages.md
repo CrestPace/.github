@@ -29,6 +29,6 @@ Each stage lives in its own folder under `stages/` and contains four files:
 
 | Stage | Folder | Focus |
 |---|---|---|
-| 1 | [stage1](stages/stage1) | Authentication layer -- sign-in, KYC, account creation |
-| 2 | stage2 | *To be defined* |
+| 1 | [stage1](stages/stage1) | Authentication layer including sign-in, KYC, account creation |
+| 2 | stage2 | Deposit, transfer and withdrawal logic  |
 | 3 | stage3 | *To be defined* |
